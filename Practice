@@ -1,0 +1,70 @@
+public class test
+{
+   public static void main(String[] args)
+   {
+       /*
+       double [] a1 = {1.2, 2.3,3.4,4.5,5.6};
+       double [] a2 = {1.0, 2.0, 3.0, 4.0, 5.0};
+       double [] a3 = new double[5];
+       for (int i = 0; i < a1.length; i++) {
+       a3[i] = (a1[i] + a2[i]);
+       System.out.println(a3[i]);
+         }
+       */
+      /*
+      double [] times = {24.6, 20.5, 22.6, 28.7};
+      double min = Integer.MAX_VALUE;
+      double max = Integer.MIN_VALUE;
+      double total = 0;
+      double average = 0;
+      for (int i = 0; i < times.length; i++) {
+        if (times[i] < min) {
+          min = times[i];
+        }
+        if (times[i] > max) {
+          max = times[i];
+        }
+        total += times[i];
+      }
+      total = total - min - max;
+      average = ( total / (times.length-2));
+      for (int i = 0; i < times.length; i++) {
+        if ((times[i] == min) || (times[i] == max)) {
+        } else {
+          System.out.println(times[i]);
+        }
+      }
+      System.out.println(average);
+      */
+      
+      /*
+      int [] a = {2, 3, 5, 7, 11};
+      int total = 0;
+      for (int i = 0; i < a.length; i++) {
+         total += a[i];
+      }
+      
+      System.out.println(total);
+      System.out.println("Using a for each loop, the code accesses each element of the array and adds the value of each element to an integer named total, which is the integer printed above");
+      */
+     
+     /*
+     int rectLength1 = 15;
+     int rectWidth1 = 7;
+     int rectLength2 = 20;
+     int rectWidth2 = 14;
+     double lengthRatio = (rectLength1 / (double)rectLength2);
+     double widthRatio = (rectWidth1 / (double)rectWidth2);
+
+     if (lengthRatio == widthRatio) {
+       System.out.println("The rectangles are similar");
+     } else {
+       System.out.println("The rectangles are not similar");
+     }
+
+     System.out.println("Length Ratio: " + lengthRatio);
+     System.out.println("Width Ratio: " + widthRatio);
+     */
+   }
+   
+}
