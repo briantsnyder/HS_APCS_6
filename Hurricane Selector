@@ -1,0 +1,334 @@
+/**
+ * Write a program to calculate the average category, pressure, and wind speed 
+ * of Atlantic hurricanes that have occurred between a given year range. Also, 
+ * tally the number of storms in each category according to the Saffir-Simpson 
+ * scale.
+ *
+ * Brian Snyder
+ * 11/4/17
+ */
+// imports necessary files
+import java.util.Scanner;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+public class HurricaneSelector
+{
+    public static void main(String[] args) throws IOException {
+        
+        // Scans from initialized file
+        File fileName = new File("hurricanedata.txt");
+        Scanner inFile = new Scanner(fileName);
+        
+        // initializes variables and arrays
+        String [] month = new String [156]; // array for months 
+        String [] name = new String [156]; // array for names of hurricanes
+        
+        Double [] windSpeed = new Double [156]; // array for wind speedsd
+        
+        double averageCategory = 0; // double for average category
+        double averagePressure = 0; // double for average pressure
+        double averageWindSpeed = 0; // double for average wind speed
+        double num = 0; // double that's used as a counter and to divide by to find averages
+        double minWindSpeed = Integer.MAX_VALUE; // double used to find min wind speed
+        double maxWindSpeed = Integer.MIN_VALUE; // double used to find max wind speed
+        
+        Integer [] year = new Integer [156]; // array for years
+        Integer [] pressure = new Integer [156]; // array for pressures
+        
+        int count = 0; // integer used as another counter
+        int category = 0; // int used to assign values for each hurricane
+        int category1 = 0; // counter used for category 1 hurricanes
+        int category2 = 0; // counter for category 2
+        int category3 = 0; // counter for category 3
+        int category4 = 0; // counter for category 4
+        int category5 = 0; // counter for category 5
+        int minPressure = Integer.MAX_VALUE; // min pressure value
+        int maxPressure = Integer.MIN_VALUE; // max pressure value
+        int minCategory = Integer.MAX_VALUE; // min category value
+        int maxCategory = Integer.MIN_VALUE; // maxx category value
+        
+        // while the file has another line, the different data pieces are added to their arrays
+        while (inFile.hasNextLine() ) {
+           year[count] = inFile.nextInt();
+           month[count] = inFile.next();
+           pressure[count] = inFile.nextInt();
+           windSpeed[count] = (inFile.nextDouble() * 1.15078);
+           name[count] = inFile.next();
+           
+           count++; // incraments in order to determine number of hurricanes in total
+        }
+        
+        inFile.close(); // stops reading the file
+        
+        Scanner in = new Scanner (System.in); // scanner is now based off user input
+        
+        // asks user for the years, if an invalid option is entered, the user is asked again
+        System.out.print("Choose a beginning year (1995 - 2015): ");
+        Integer beginningYear = in.nextInt();
+        while (beginningYear < 1995 || beginningYear > 2015) {
+            System.out.print("Invalid year, enter a year after 1994 or before 2016 ");
+            beginningYear = in.nextInt();
+        }
+        
+        System.out.print("Choose an ending year (2015 is the latest): ");
+        Integer endYear = in.nextInt();
+        
+        while (endYear > 2015 && endYear > beginningYear) {
+            System.out.print("Invalid year, enter a year after 1994 or after the beginning year ");
+            endYear = in.nextInt();
+        }
+        
+        // displays header with formatted categories
+        System.out.println("");
+        System.out.printf("%42s\n", "Hurricanes " + beginningYear + " - " + endYear);
+        System.out.println("");
+        System.out.printf("%5s%14s%10s%18s%21s\n", "Year", "Hurricane", "Category", "Pressure (mb)", "Wind Speed (mph)");
+        System.out.println("===================================================================");
+        
+        // for loop that goes through each each array for the years between the user input
+        for (int i = 0; i < count; i ++) { // goes to the maximum number for each of the arrays, which was determined in the first while loop 
+            if (year[i] <= endYear && year[i] >= beginningYear) {
+              if (windSpeed[i] <= 95) { // goes through the values of the wind speed for the hurricanes within the correct yeat
+                category = 1;           // for whatever category the wind speed falls under, the hurricane is assigned that category and the 
+                category1++;            // total number of each category increases 
+              } else if (windSpeed[i] > 95 && windSpeed[i] <= 110) {
+                category = 2;
+                category2++;
+              } else if (windSpeed[i] > 110 && windSpeed[i] <= 129) {
+                category = 3;
+                category3++;
+              } else if (windSpeed[i] > 129 && windSpeed[i] <= 156) {
+                category = 4;
+                category4++;
+              } else {
+                category = 5;
+                category5++;
+            }
+            // Determines the min and max pressure / wind speed by assigning the highest / lowest value of each to the min / max integers
+            if (pressure[i] < minPressure) {
+                minPressure = pressure[i];
+            }
+            if (pressure[i] > maxPressure) {
+                maxPressure = pressure[i];
+            }
+            
+            if (windSpeed[i] < minWindSpeed) {
+                minWindSpeed = windSpeed[i];
+            }
+            if (windSpeed[i] > maxWindSpeed) {
+                maxWindSpeed = windSpeed[i];
+            }
+            
+            averagePressure += pressure[i]; // adds all of the pressure values together, divides to find the average later
+            averageWindSpeed += windSpeed[i]; // same as line above except for wind speed
+            num++; // integer used as a counter is increased to determine the number of huricanes within the years the user put in
+            
+            // prints out all of the information in a specific format for the hurricanes within the requested years
+            System.out.printf("%5s%s%-9s%6s%14s%21.2f\n", year[i], "     ", name[i], category, pressure[i], windSpeed[i]);
+            }
+        }
+        // nested if else that determines the maximum category, if there is a 5 hurricane, its 5, else it asks the same for a 4 hurricane, etc. 
+        if (category5 > 0) {
+            maxCategory = 5;
+        } else if (category4 > 0) {
+            maxCategory = 4; 
+        } else if (category3 > 0 ) {
+            maxCategory = 3;
+        } else if (category2 > 0 ) {
+            maxCategory = 2;
+        } else maxCategory = 1;
+        // same nested if else as above excet its for the minimum category so it asks about category 1 first
+        if (category1 > 0) {
+            minCategory = 1;
+        } else if (category2 > 0) {
+            minCategory = 2; 
+        } else if (category3 > 0 ) {
+            minCategory = 3;
+        } else if (category4 > 0 ) {
+            minCategory = 4;
+        } else minCategory = 5;
+        
+        // finds the average category by multiplying the # of ecah type of hurricane by its category value (ex category 5 = 5), and then divided by the number of 
+        averageCategory = ((category1 + (2*category2) + (3*category3) + (4*category4) + (5*category5)) / num); // hurricanes requested to find the average
+        averagePressure = (averagePressure / num); // divides the total pressure by the number of hurricanes
+        averageWindSpeed = (averageWindSpeed / num); // divides total wind speed b ythe number of hurricanes
+        
+        // Displays information that's formatted as well
+        System.out.println("===================================================================");
+        System.out.printf("%15s%12.1f%14.1f%19.2f\n", "Average:", averageCategory, averagePressure, averageWindSpeed);
+        System.out.printf("%15s%10d%14d%21.2f\n", "Minimum:", minCategory, minPressure, minWindSpeed);
+        System.out.printf("%15s%10d%14d%21.2f\n", "Maximum:", maxCategory, maxPressure, maxWindSpeed);
+        
+        // saves the following information into a document
+        PrintWriter outFile = new PrintWriter(new File("hurricanSummaryStatistics.txt"));
+        
+        // prints the summary of hte hurricanes, which is the number of each category
+        outFile.println("Summary of Categories:");
+        outFile.printf("%10s%2d\n", "Cat 1: ", category1);
+        outFile.printf("%n%10s%2d\n", "Cat 2: ", category2);
+        outFile.printf("%n%10s%2d\n", "Cat 3: ", category3);
+        outFile.printf("%n%10s%2d\n", "Cat 4: ", category4);
+        outFile.printf("%n%10s%2d\n", "Cat 5: ", category5);
+        
+        outFile.close(); // file closes
+        }  // end of main method   
+} // end of code
+/* Hurricane Data - what's inside hurricanedata.txt:
+1995	Jun	987	65	Allison
+1995	Jul	973	85	Erin
+1995	Aug	929	120	Felix
+1995	Aug	968	95	Humberto
+1995	Aug	965	95	Iris
+1995	Aug	945	130	Luis
+1995	Sep	949	100	Marilyn
+1995	Sep	987	65	Noel
+1995	Sep	916	130	Opal
+1995	Oct	956	100	Roxanne
+1995	Oct	972	75	Tanya
+1996	Jul	960	100	Bertha
+1996	Jul	985	75	Cesar
+1996	Aug	989	70	Dolly
+1996	Aug	933	125	Edouard
+1996	Aug	946	105	Fran
+1996	Sep	935	120	Hortense
+1996	Sep	960	100	Isidore
+1996	Oct	960	100	Lili
+1996	Nov	983	65	Marco
+1997	Jul	986	65	Bill
+1997	Jul	984	70	Danny
+1997	Sep	946	110	Erika
+1998	Aug	954	100	Bonnie
+1998	Aug	960	70	Danielle
+1998	Aug	985	80	Earl
+1998	Sep	937	135	Georges
+1998	Sep	975	80	Ivan
+1998	Sep	969	90	Jeanne
+1998	Sep	970	90	Karl
+1998	Oct	995	65	Lisa
+1998	Oct	905	155	Mitch
+1998	Nov	979	75	Nicole
+1999	Aug	944	125	Bret
+1999	Aug	942	120	Cindy
+1999	Aug	962	90	Dennis
+1999	Sep	921	135	Floyd
+1999	Sep	930	130	Gert
+1999	Oct	958	95	Irene
+1999	Oct	979	85	Jose
+1999	Nov	933	135	Lenny
+2000	Aug	950	110	Alberto
+2000	Aug	991	75	Debby
+2000	Sep	985	70	Florence
+2000	Sep	981	70	Gordon
+2000	Sep	943	120	Isaac
+2000	Sep	975	80	Joyce
+2000	Sep	939	120	Keith
+2000	Oct	965	85	Michael
+2001	Sep	968	105	Erin
+2001	Sep	962	100	Felix
+2001	Sep	975	70	Gabrielle
+2001	Sep	970	90	Humberto
+2001	Oct	948	125	Iris
+2001	Oct	982	70	Karen
+2001	Oct	933	120	Michelle
+2001	Nov	986	65	Noel
+2001	Nov	973	80	Olga
+2002	Sep	960	80	Gustav
+2002	Sep	934	110	Isidore
+2002	Sep	980	75	Kyle
+2002	Sep	938	125	Lili
+2003	Jul	979	80	Claudette
+2003	Jul	1000	65	Danny
+2003	Aug	986	65	Erika
+2003	Aug	939	125	Fabian
+2003	Sep	915	145	Isabel
+2003	Sep	969	90	Juan
+2003	Sep	952	110	Kate
+2004	Jul	957	105	Alex
+2004	Aug	941	130	Charley
+2004	Aug	964	95	Danielle
+2004	Aug	935	125	Frances
+2004	Aug	985	65	Gaston
+2004	Sep	910	145	Ivan
+2004	Sep	950	105	Jeanne
+2004	Sep	938	125	Karl
+2004	Sep	987	65	Lisa
+2005	Jul	991	65	Cindy
+2005	Jul	930	130	Dennis
+2005	Jul	929	140	Emily
+2005	Aug	970	90	Irene
+2005	Aug	902	150	Katrina
+2005	Sep	962	100	Maria
+2005	Sep	979	80	Nate
+2005	Sep	976	75	Ophelia
+2005	Sep	985	70	Philippe
+2005	Sep	895	155	Rita
+2005	Oct	977	70	Stan
+2005	Oct	988	65	Vince
+2005	Oct	882	160	Wilma
+2005	Oct	962	100	Beta
+2005	Nov	981	75	Epsilon
+2006	Aug	992	65	Ernesto
+2006	Sep	974	80	Florence
+2006	Sep	955	105	Gordon
+2006	Sep	955	105	Helene
+2006	Sep	985	75	Isaac
+2007	Aug	905	150	Dean
+2007	Aug	929	150	Felix
+2007	Sep	985	80	Humberto
+2007	Sep	988	65	Karen
+2007	Sep	990	70	Lorenzo
+2007	Oct	980	70	Noel
+2008	Jul	952	110	Bertha
+2008	Jul	963	85	Dolly
+2008	Aug	941	135	Gustav
+2008	Aug	977	75	Hanna
+2008	Sep	935	125	Ike
+2008	Sep	984	70	Kyle
+2008	Oct	958	115	Omar
+2008	Nov	970	85	Paloma
+2009	Aug	943	115	Bill
+2009	Sep	958	105	Fred
+2009	Nov	975	90	Ida
+2010	Jun	946	95	Alex
+2010	Aug	942	115	Danielle
+2010	Aug	927	125	Earl
+2010	Sep	924	135	Igor
+2010	Sep	948	120	Julia
+2010	Sep	956	110	Karl
+2010	Sep	982	75	Lisa
+2010	Oct	976	75	Otto
+2010	Oct	981	90	Paula
+2010	Oct	977	85	Richard
+2010	Oct	989	65	Shary
+2010	Oct	985	85	Tomas
+2011	Aug	942	105	Irene
+2011	Aug	942	120	Katia
+2011	Sep	983	70	Maria
+2011	Sep	994	65	Nate
+2011	Sep	940	120	Ophelia
+2011	Sep	976	80	Philippe
+2011	Oct	966	100	Rina
+2012	Jun	974	75	Chris
+2012	Aug	973	85	Ernesto
+2012	Aug	965	95	Gordon
+2012	Aug	965	70	Isaac
+2012	Aug	970	90	Kirk
+2012	Aug	968	70	Leslie
+2012	Sep	964	100	Michael
+2012	Sep	978	80	Nadine
+2012	Oct	969	80	Rafael
+2012	Oct	940	100	Sandy
+2013	Sep	979	80	Humberto
+2013	Sep	983	75	Ingrid
+2014	Jul	973	85	Arthur
+2014	Aug	998	70	Bertha
+2014	Aug	965	75	Cristobal
+2014	Sep	955	105	Edouard
+2014	Oct	983	70	Fay
+2014	Oct	940	125	Gonzalo
+2015	Aug	960	110	Danny
+2015	Aug	986	75	Fred
+2015	Sep	931	135	Joaquin
+2015	Nov	980	75	Kate
+*/
